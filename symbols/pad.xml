@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Symbols relating to GCN controllers -->
+<!-- Symbols for Super Smash Bros. Brawl NTSC-U (RSBE01) -->
+<!-- PADRead        = 80215fc4 (entry point at 80215fec, offset 0x28) -->
+<!-- PADInit        = 801f0ce8 (confirmed via Dolphin SI breakpoint)  -->
+<!-- PADControlMotor= 8021559c (confirmed via GPF patch analysis)     -->
 <symbols>
-    <symbol name="PADInit" size="0x15c" offset="0x114">
+    <!-- PADRead at 80215fc4                                              -->
+    <!-- Pattern at offset 0x28: li r20,0 / li r21,0 / li r27,-2        -->
+    <!-- li r28,-1 -- confirmed from Dolphin memory view                 -->
+    <symbol name="PADRead" size="0x200" offset="0x28">
         <data>
-            64074d00 64054d40 64034d80 64004dc0
+            3A800000 3AA00000 3B60FFFE 3B80FFFF
         </data>
     </symbol>
-    <!-- a new version of PADRead changes much -->
-    <symbol name="PADRead" size="0x2e0" offset="0x5c" >
+
+    <!-- PADInit at 801f0ce8                                             -->
+    <!-- Pattern at offset 0x18: lwz r30,-0x3B5C(r13) / bl 0x801DCF10  -->
+    <!-- stw r30,-0x3B5C(r13) / bl 0x801DCF38 -- confirmed memory view  -->
+    <symbol name="PADInit" size="0x40" offset="0x18">
         <data>
-            4e800421 a0130000 540004a5 41820040
+            83EDC4A4 4BFEC20D 93CDC4A4 4BFEC22D
         </data>
     </symbol>
-    <symbol name="PADRead" size="0x4bc" offset="0x258" >
+
+    <!-- PADControlMotor at 8021559c                                     -->
+    <!-- Pattern at offset 0x00: stwu/mflr/stw/rlwinm./stw              -->
+    <!-- rlwinm. r0,r4,0,28,31 (5480073F) is unique motor control check -->
+    <symbol name="PADControlMotor" size="0x80" offset="0x00">
         <data>
-            4e800421 80170000 5403001e 3c03f700
-        </data>
-    </symbol>
-    <symbol name="PADControlMotor" size="0xb8" offset="0x64" >
-        <data>
-            3c608000 880330e3 540006b5 41820008
+            9421FFE0 7C0802A6 90010024 5480073F 93E1001C
         </data>
     </symbol>
 </symbols>
