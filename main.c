@@ -47,7 +47,7 @@
 #include <rvl/Pad.h>
 
 BSLUG_MODULE_GAME("????");
-BSLUG_MODULE_NAME("USB GCN Adapter Support");
+BSLUG_MODULE_NAME("USB GCN Adapter Support for Brawl");
 BSLUG_MODULE_VERSION("v1.0");
 BSLUG_MODULE_AUTHOR("Chadderz");
 BSLUG_MODULE_LICENSE("BSD");
@@ -366,6 +366,15 @@ static ioctlv dev_usb_hid5_poll_argv[2] IOS_ALIGN;
 void _start(void);
 
 static void my_start(void) {
+  /* Patch Brawl NTSC-U #001 error call */
+  #define GAME_ID ((volatile uint32_t *)0x80000000)
+  #define BRAWL_NTSC_U 0x52534245  /* 'RSBE' */
+  if (*GAME_ID == BRAWL_NTSC_U) {
+    volatile uint32_t *p;
+    p = (volatile uint32_t *)0x801d60a4;
+    *p = 0x60000000;
+  }
+
   /* Allocate some area in MEM2. */
   dev_usb_hid5_devices = *OS_IPC_HEAP_HIGH;
   dev_usb_hid5_devices -= DEV_USB_HID5_DEVICE_CHANGE_SIZE;
